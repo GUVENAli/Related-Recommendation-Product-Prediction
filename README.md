@@ -48,3 +48,9 @@ Then for requesting related products from the server, run the below script:
 ```python
 python main.py
 ```
+
+## IMPORTANT NOTE
+events.json and meta.json can not be shared because of they are private data. If you want to run this codes, you will need to add the files to data folder.
+dataset.csv is anonymized so if you want to download just click [here](https://drive.google.com/drive/folders/1WWmEevA3Yj4UzP5vfKt6G502w0IZybxm?usp=sharing)
+
+In the data folder, there are 10 samples each has one cart and related products. Assuming that the inputs of the server would be like this.
