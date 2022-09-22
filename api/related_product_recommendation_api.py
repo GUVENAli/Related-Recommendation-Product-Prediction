@@ -6,6 +6,7 @@ import pandas as pd
 import json
 from sklearn.preprocessing import StandardScaler
 import collections
+import sys
 
 app = Flask(__name__)
 api = Api(app)
@@ -41,13 +42,14 @@ class Clusterer(Resource):
 
         preds_df = pd.DataFrame(preds, columns=["preds"])
         chosen_carts = sess_ids_uniques[preds_df["preds"] == predictions[0]]
+        app.logger.warning(predictions)
 
         product_names = []
         ids = np.arange(len(chosen_carts))
         np.random.shuffle(ids)
-        loop = chosen_carts[0:100]
+        loop = chosen_carts.values[ids[0:np.min([100, len(ids)//10])]]
         for i in range(len(loop)):
-            products = data[data["sessionid"] == loop.values[i]]["productid"]
+            products = data[data["sessionid"] == loop[i]]["productid"]
             for j in range(len(products)):
                 temp = data_m[data_m["productid"] == products.values[j]]["name"]
                 if temp.empty:
@@ -65,12 +67,11 @@ class Clusterer(Resource):
     def post(self):
         args = parser.parse_args()
         test = np.array(json.loads(args['data']))
-        print(test)
-        scaler = StandardScaler()
-        pre_d = scaler.fit_transform(test)
+        scaler1 = StandardScaler()
+        pre_d = scaler1.fit_transform(test)
         prediction = model.predict(pre_d)
         result = self.recommendation(prediction)
-        print(result)
+        print(prediction)
         return jsonify(result)
 
 api.add_resource(Clusterer, '/recommendation')
